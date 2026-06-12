@@ -1,183 +1,124 @@
-# Windows 10/11 Development Environment Setup
+# Dev Environment Setup — Windows 10/11
 
-## Overview
+![PowerShell](https://img.shields.io/badge/PowerShell-5.1%2B-blue?logo=powershell&logoColor=white)
+![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D6?logo=windows&logoColor=white)
+![winget](https://img.shields.io/badge/winget-required-informational)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-This repository provides a collection of **PowerShell scripts** that automate the setup of a **modern development environment on Windows 10 and Windows 11**.
-It is designed to help developers quickly configure their systems with essential tools, languages, and environments — including **VSCode**, **Docker**, and **WSL2** —.
-
-Each script can be executed individually depending on your needs, and all are designed to run safely on fresh or existing Windows installations.
-
----
-
-## Repository Contents
-
-### 1. **Basic Development Setup**
-
-- **File:** [`setup-dev README`](https://github.com/IntiCerda/Script-Dev-W10-W11/blob/main/Basic%20Development%20Setup/README.md)
-- **Purpose:** Installs the core tools, languages, and editors for a typical development environment.
-
-#### Installs:
-
-- **Tools:** Git, Visual Studio Code
-- **Languages:** Go, Node.js (LTS), Python, Java (Temurin 21)
-- **Development Tools:** Postman, MongoDB Compass
-- **VSCode Extensions:**
-  Go, ESLint, Prettier, Python, Docker, MongoDB, Indenticator, Material Icon Theme, Palenight Theme, Subtle Brackets
+> Automated PowerShell scripts to provision a complete developer environment on Windows 10/11 in a single run — idempotent, modular, and admin-safe.
 
 ---
 
-### 2. **Docker and WSL Setup**
+## Quick Start
 
-- **File:** [`setup-docker-wsl README`](https://github.com/IntiCerda/Script-Dev-W10-W11/blob/main/Docker%20and%20WSL%20Setup/README.md)
-- **Purpose:** Installs and configures **WSL2** (Windows Subsystem for Linux) and **Docker Desktop** for container-based development.
+Open PowerShell **as Administrator** and run:
 
-#### Installs and Configures:
+```powershell
+# Full setup (tools + languages + Docker + WSL2)
+& ".\Complete Development Setup\setup-dev-complete.ps1"
 
-- Enables **Windows Subsystem for Linux** and **Virtual Machine Platform**
-- Sets **WSL2** as the default version
-- Installs **Ubuntu**
-- Downloads and installs **Docker Desktop**
-- Configures Docker to use the **WSL2 backend**
-- Cleans up installers after setup
+# Tools and languages only
+& ".\Basic Development Setup\setup-dev.ps1"
 
-⚠️ **Note:** Ensure that **virtualization is enabled in your BIOS** before running this script.
-You can verify this in **Task Manager → Performance → CPU → Virtualization** (it should say _Enabled_).
-Docker Desktop and WSL2 will not work correctly without it.
+# Docker + WSL2 only
+& ".\Docker and WSL Setup\setup-docker-wsl.ps1"
+```
 
----
-
-### 3. **Complete Development Setup**
-
-- **File:** [`setup-dev-complete README`](https://github.com/IntiCerda/Script-Dev-W10-W11/blob/main/Complete%20Development%20Setup/README.md)
-- **Purpose:** A full setup that combines the previous scripts into one process.
-  It installs developer tools, languages, WSL2, Docker, and VSCode extensions — everything ready in a single run.
-
-#### Includes:
-
-- PowerShell execution policy configuration
-- Installation/update of **Winget**
-- Core tools (Git, VSCode, Postman, MongoDB Server)
-- Programming languages (Go, Node.js, Python, Java)
-- WSL2 + Ubuntu installation
-- Docker Desktop configuration
-- VSCode extensions (same as in _Basic Development Setup_)
+Each script logs everything to a timestamped file in `%TEMP%`.
 
 ---
 
-## 🧱 System Requirements
+## What Gets Installed
 
-- **Operating System:** Windows 10 or Windows 11
-- **Privileges:** Administrator access required
-- **Internet Connection:** Required for package downloads via Winget and official installers
+### Tools & Languages
 
----
+| Category       | Package                                      |
+|----------------|----------------------------------------------|
+| Version Control | Git                                         |
+| Editor         | Visual Studio Code                           |
+| Terminal       | Windows Terminal                             |
+| CLI            | GitHub CLI (`gh`)                            |
+| Languages      | Go · Node.js LTS · Python 3.12 · Java 21 (Temurin) |
+| API Testing    | Postman                                      |
+| Database GUI   | MongoDB Compass (Community)                  |
+| Containers     | Docker Desktop (WSL2 backend)                |
+| Linux          | WSL2 + Ubuntu                                |
 
-## Why Use These Scripts?
+### VSCode Extensions
 
-- **Full automation:** No manual installations or downloads.
-- **Consistency:** Ensures identical environments across different machines.
-- **Time-saving:** One command sets up your entire development workspace.
-- **Modular:** Use only the scripts you need.
-- **Safe:** Uses official sources (Winget, Microsoft Store, Docker official downloads).
-
----
-
-## 📎 Author
-
-- **Created by:** [Inti Cerda](https://github.com/IntiCerda)
-- **Repository:** [Script-Dev-W10-W11](https://github.com/IntiCerda/Script-Dev-W10-W11)
-
----
-
----
-
-# Configuración de Entorno de Desarrollo para Windows 10/11
-
-## Descripción General
-
-Este repositorio contiene una colección de **scripts en PowerShell** que automatizan la configuración de un **entorno de desarrollo moderno en Windows 10 y Windows 11**.
-Está diseñado para ayudar a los desarrolladores a preparar rápidamente su sistema con las herramientas, lenguajes y entornos esenciales — incluyendo **VSCode**, **Docker** y **WSL2** —
-
-Cada script puede ejecutarse de forma independiente según tus necesidades, y todos están preparados para funcionar de forma segura en instalaciones nuevas o existentes de Windows.
+| Extension             | Purpose                        |
+|-----------------------|--------------------------------|
+| Go                    | Go language support            |
+| Python                | Python language support        |
+| ESLint + Prettier     | Linting and formatting         |
+| Docker                | Container management           |
+| MongoDB               | Database explorer              |
+| GitLens               | Git history inline             |
+| REST Client           | HTTP requests inside VSCode    |
+| EditorConfig          | Cross-project code consistency |
+| Material Icon Theme   | File icons                     |
+| Palenight Theme       | Color theme                    |
+| Indenticator          | Indentation guides             |
+| Subtle Brackets       | Bracket highlighting           |
 
 ---
 
-## Contenido del Repositorio
+## Scripts
 
-### 1. **Basic Development Setup**
+### `setup-dev.ps1` — Basic Development Setup
 
-- **Archivo:** [`setup-dev README`](https://github.com/IntiCerda/Script-Dev-W10-W11/blob/main/Basic%20Development%20Setup/README.md)
-- **Propósito:** Instala las herramientas, lenguajes y editores esenciales para un entorno de desarrollo estándar.
+Installs core tools, languages, dev utilities, and all VSCode extensions. Safe to re-run — skips anything already installed.
 
-#### Instala:
+```
+Basic Development Setup/
+└── setup-dev.ps1
+```
 
-- **Herramientas:** Git, Visual Studio Code
-- **Lenguajes:** Go, Node.js (LTS), Python, Java (Temurin 21)
-- **Herramientas de Desarrollo:** Postman, MongoDB Compass
-- **Extensiones de VSCode:**
-  Go, ESLint, Prettier, Python, Docker, MongoDB, Indenticator, Material Icon Theme, Palenight Theme, Subtle Brackets
+### `setup-docker-wsl.ps1` — Docker and WSL Setup
 
----
+Enables WSL2 features, installs Ubuntu, and sets up Docker Desktop with the WSL2 backend. Detects architecture (AMD64/ARM64) and skips the Docker download if already installed.
 
-### 2. **Docker and WSL Setup**
+```
+Docker and WSL Setup/
+└── setup-docker-wsl.ps1
+```
 
-- **Archivo:** [`setup-docker-wsl README`](https://github.com/IntiCerda/Script-Dev-W10-W11/blob/main/Docker%20and%20WSL%20Setup/README.md)
-- **Propósito:** Instala y configura **WSL2** (Subsistema de Windows para Linux) y **Docker Desktop** para desarrollo basado en contenedores.
+> **Before running:** verify that virtualization is enabled in BIOS.
+> Check via **Task Manager → Performance → CPU → Virtualization: Enabled**.
 
-#### Instala y Configura:
+### `setup-dev-complete.ps1` — Complete Setup ✦ Recommended
 
-- Activa **Windows Subsystem for Linux** y **Virtual Machine Platform**
-- Define **WSL2** como versión predeterminada
-- Instala **Ubuntu**
-- Descarga e instala **Docker Desktop**
-- Configura Docker para usar **WSL2**
-- Elimina los instaladores temporales tras finalizar
+Orchestrates both scripts above in sequence. Also checks for winget and refreshes package sources before starting.
 
-⚠️ **Importante:** Asegúrate de que la **virtualización esté activada en la BIOS** antes de ejecutar este script.
-Puedes verificarlo en **Administrador de Tareas → Rendimiento → CPU → Virtualización** (debe decir _Habilitado_).
-Sin esto, Docker Desktop y WSL2 no funcionarán correctamente.
+```
+Complete Development Setup/
+└── setup-dev-complete.ps1
+```
 
 ---
 
-### 3. **Complete Development Setup**
+## Requirements
 
-- **Archivo:** [`setup-dev-complete README`](https://github.com/IntiCerda/Script-Dev-W10-W11/blob/main/Complete%20Development%20Setup/README.md)
-- **Propósito:** Configuración completa que combina los dos scripts anteriores en un solo proceso.
-  Instala herramientas de desarrollo, lenguajes, WSL2, Docker y extensiones de VSCode.
-
-#### Incluye:
-
-- Configuración de política de ejecución de PowerShell
-- Instalación/actualización de **Winget**
-- Herramientas principales (Git, VSCode, Postman, MongoDB Server)
-- Lenguajes (Go, Node.js, Python, Java)
-- Instalación de WSL2 + Ubuntu
-- Configuración de Docker Desktop
-- Extensiones de VSCode (las mismas que en _Basic Development Setup_)
+| Requirement        | Details                                    |
+|--------------------|--------------------------------------------|
+| OS                 | Windows 10 or Windows 11                  |
+| Privileges         | Administrator                              |
+| Internet           | Required for package downloads             |
+| Virtualization     | Required for WSL2 and Docker Desktop       |
 
 ---
 
-## Requisitos del Sistema
+## Design
 
-- **Sistema Operativo:** Windows 10 o Windows 11
-- **Privilegios:** Acceso de administrador
-- **Conexión a Internet:** Requerida para descargar paquetes e instaladores oficiales
-
----
-
-## ¿Por qué usar estos scripts?
-
-- **Automatización completa:** Sin instalaciones manuales.
-- **Consistencia:** Mismo entorno en distintas máquinas.
-- **Ahorro de tiempo:** Todo el entorno se configura en un solo paso.
-- **Modularidad:** Usa solo los scripts que necesites.
-- **Seguro:** Usa fuentes oficiales (Winget, Microsoft Store, Docker).
+- **Idempotent** — re-running never breaks or duplicates an existing install
+- **Modular** — run only what you need
+- **Safe** — installs from official sources only (winget, Docker, Microsoft)
+- **Logged** — full transcript saved to `%TEMP%` on every run
+- **Arch-aware** — Docker installer auto-selects AMD64 or ARM64
+- **Reboot detection** — warns if a pending restart may affect WSL2 activation
 
 ---
 
-## 📎 Autor
+## Author
 
-- **Creado por:** [Inti Cerda](https://github.com/IntiCerda)
-- **Repositorio:** [Script-Dev-W10-W11](https://github.com/IntiCerda/Script-Dev-W10-W11)
-
----
+**Inti Cerda** · [github.com/IntiCerda](https://github.com/IntiCerda)
