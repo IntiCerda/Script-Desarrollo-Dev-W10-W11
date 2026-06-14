@@ -8,6 +8,8 @@
 # - Run Basic Development Setup   (setup-dev.ps1)
 # - Run Docker and WSL Setup      (setup-docker-wsl.ps1)
 # - Clean temporary files
+#
+# Can be run from disk OR via iex from URL — both work.
 # ----------------------------------------
 
 # ---- Admin check ----
@@ -30,6 +32,25 @@ function Write-Step([string]$Msg) {
     Write-Host "[$script:Step/$script:Total] $Msg" -ForegroundColor Cyan
 }
 
+# ---- Resolve sub-script paths (disk or iex/URL) ----
+# When run via iex, $PSScriptRoot is empty — download sub-scripts to %TEMP%.
+$BaseUrl      = "https://raw.githubusercontent.com/IntiCerda/Script-Desarrollo-Dev-W10-W11/main"
+$TempDev      = "$env:TEMP\setup-dev.ps1"
+$TempDocker   = "$env:TEMP\setup-docker-wsl.ps1"
+$CleanupTemps = $false
+
+if ($PSScriptRoot) {
+    $DevScript    = "$PSScriptRoot\..\Basic Development Setup\setup-dev.ps1"
+    $DockerScript = "$PSScriptRoot\..\Docker and WSL Setup\setup-docker-wsl.ps1"
+} else {
+    Write-Host "  Running from URL — downloading sub-scripts to TEMP..." -ForegroundColor DarkGray
+    Invoke-WebRequest -UseBasicParsing -Uri "$BaseUrl/Basic%20Development%20Setup/setup-dev.ps1"      -OutFile $TempDev
+    Invoke-WebRequest -UseBasicParsing -Uri "$BaseUrl/Docker%20and%20WSL%20Setup/setup-docker-wsl.ps1" -OutFile $TempDocker
+    $DevScript    = $TempDev
+    $DockerScript = $TempDocker
+    $CleanupTemps = $true
+}
+
 Write-Host "Starting Complete Development Setup..." -ForegroundColor Cyan
 
 # ---- [1/4] Winget ----
@@ -43,15 +64,19 @@ winget source update
 
 # ---- [2/4] Basic development setup ----
 Write-Step "Running Basic Development Setup..."
-& "$PSScriptRoot\..\Basic Development Setup\setup-dev.ps1" -Orchestrated
+& $DevScript -Orchestrated
 
 # ---- [3/4] Docker and WSL setup ----
 Write-Step "Running Docker and WSL Setup..."
-& "$PSScriptRoot\..\Docker and WSL Setup\setup-docker-wsl.ps1" -Orchestrated
+& $DockerScript -Orchestrated
 
 # ---- [4/4] Cleanup ----
 Write-Step "Final cleanup..."
 Remove-Item "$env:TEMP\Microsoft.DesktopAppInstaller.appxbundle" -Force -ErrorAction SilentlyContinue
+if ($CleanupTemps) {
+    Remove-Item $TempDev    -Force -ErrorAction SilentlyContinue
+    Remove-Item $TempDocker -Force -ErrorAction SilentlyContinue
+}
 
 Write-Host "✅ Complete Development Setup finished." -ForegroundColor Green
 Write-Host "Restart the system to apply all changes." -ForegroundColor Yellow

@@ -5,9 +5,9 @@ param([switch]$Orchestrated)
 # for Windows 10/11 using winget.
 # Actions:
 # - Install core tools: Git, Visual Studio Code, Windows Terminal, GitHub CLI
-# - Install languages: Go, Node.js (LTS), Python, Java (Temurin JDK)
-# - Install tools: Postman, MongoDB Compass (Community)
-# - Install VS Code extensions: Go, ESLint, Prettier, Python, Docker, MongoDB, GitLens, REST Client, EditorConfig, themes, bracket helpers
+# - Install languages: Go, fnm (Node version manager), Python, Java (Temurin JDK)
+# - Install tools: Bruno (API client), jq, make
+# - Install VS Code extensions: Go, ESLint, Prettier, Python, Docker, MongoDB, GitLens, REST Client, EditorConfig (9 total)
 # - Add %USERPROFILE%\go\bin to the user PATH (only if not already present)
 # Pass -Orchestrated when called from setup-dev-complete.ps1 to skip admin check and transcript.
 # ----------------------------------------
@@ -55,36 +55,42 @@ Install-WingetPackage "Microsoft.WindowsTerminal"
 Install-WingetPackage "GitHub.cli"
 
 # ---- [2/5] Languages ----
-Write-Step "Installing languages (Go, Node.js LTS, Python $PythonVersion, Java $JavaVersion)..."
+Write-Step "Installing languages (Go, fnm, Python $PythonVersion, Java $JavaVersion)..."
 Install-WingetPackage "GoLang.Go"
-Install-WingetPackage "OpenJS.NodeJS.LTS"
+Install-WingetPackage "Schniz.fnm"
 Install-WingetPackage "Python.Python.$PythonVersion"
 Install-WingetPackage "Eclipse.Adoptium.Temurin.$JavaVersion.JDK"
 
+# Install LTS Node via fnm (refresh PATH first so fnm is available in this session)
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+if (Get-Command fnm -ErrorAction SilentlyContinue) {
+    fnm install --lts
+    Write-Host "  Node.js LTS installed via fnm." -ForegroundColor DarkGray
+} else {
+    Write-Host "  fnm installed — run 'fnm install --lts' after restarting your terminal." -ForegroundColor Yellow
+}
+
 # ---- [3/5] Dev tools ----
-Write-Step "Installing dev tools (Postman, MongoDB Compass)..."
-Install-WingetPackage "Postman.Postman"
-Install-WingetPackage "MongoDB.Compass.Community"
+Write-Step "Installing dev tools (Bruno, jq, make)..."
+Install-WingetPackage "Bruno.Bruno"
+Install-WingetPackage "jqlang.jq"
+Install-WingetPackage "GnuWin32.Make"
 
 # ---- [4/5] VSCode extensions ----
-Write-Step "Installing VSCode extensions (13)..."
+Write-Step "Installing VSCode extensions (9)..."
 code --install-extension ms-vscode.Go
 code --install-extension dbaeumer.vscode-eslint
 code --install-extension esbenp.prettier-vscode
 code --install-extension ms-python.python
 code --install-extension ms-azuretools.vscode-docker
 code --install-extension mongodb.mongodb-vscode
-code --install-extension SirTori.indenticator
-code --install-extension PKief.material-icon-theme
-code --install-extension whizkydee.material-palenight-theme
-code --install-extension rafamel.subtle-brackets
 code --install-extension eamodio.gitlens
 code --install-extension humao.rest-client
 code --install-extension EditorConfig.EditorConfig
 
 # ---- [5/5] Environment variables ----
 Write-Step "Configuring Go PATH..."
-$goPath     = "$env:USERPROFILE\go\bin"
+$goPath      = "$env:USERPROFILE\go\bin"
 $currentPath = [Environment]::GetEnvironmentVariable("Path", "User")
 if ($currentPath -notlike "*$goPath*") {
     [Environment]::SetEnvironmentVariable("Path", "$currentPath;$goPath", "User")
