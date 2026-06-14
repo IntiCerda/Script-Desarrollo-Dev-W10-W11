@@ -34,7 +34,7 @@ function Write-Step([string]$Msg) {
 
 # ---- Resolve sub-script paths (disk or iex/URL) ----
 # When run via iex, $PSScriptRoot is empty — download sub-scripts to %TEMP%.
-$BaseUrl      = "https://raw.githubusercontent.com/IntiCerda/Script-Desarrollo-Dev-W10-W11/main"
+$BaseUrl      = "https://raw.githubusercontent.com/IntiCerda/Script-Dev-W10-W11/main"
 $TempDev      = "$env:TEMP\setup-dev.ps1"
 $TempDocker   = "$env:TEMP\setup-docker-wsl.ps1"
 $CleanupTemps = $false
