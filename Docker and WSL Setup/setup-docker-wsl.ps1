@@ -19,7 +19,7 @@ function Test-RebootPending {
 
 function Install-WingetPackage {
     param([string]$Id, [string]$Source = "winget")
-    $check = winget list --id $Id --exact 2>$null | Select-String ([regex]::Escape($Id))
+    $check = winget list --id $Id --exact --accept-source-agreements 2>$null | Select-String ([regex]::Escape($Id))
     if ($check) {
         Write-Host "  $Id already installed, skipping." -ForegroundColor DarkGray
     } else {
@@ -72,7 +72,7 @@ if ($hvAll -and $hvAll.State -ne 'Enabled') {
     Write-Host "  Hyper-V not enabled -- Docker will use WSL2 backend (this is fine)." -ForegroundColor DarkGray
 }
 
-$dockerCheck = winget list --id Docker.DockerDesktop --exact 2>$null | Select-String "Docker.DockerDesktop"
+$dockerCheck = winget list --id Docker.DockerDesktop --exact --accept-source-agreements 2>$null | Select-String "Docker.DockerDesktop"
 if ($dockerCheck) {
     Write-Host "  Docker Desktop already installed, skipping download." -ForegroundColor DarkGray
 } else {

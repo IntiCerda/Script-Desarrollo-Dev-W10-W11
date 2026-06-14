@@ -26,7 +26,7 @@ Write-Host "Starting Basic Development Setup..." -ForegroundColor Cyan
 
 function Install-WingetPackage {
     param([string]$Id, [string]$Source = "winget")
-    $check = winget list --id $Id --exact 2>$null | Select-String ([regex]::Escape($Id))
+    $check = winget list --id $Id --exact --accept-source-agreements 2>$null | Select-String ([regex]::Escape($Id))
     if ($check) {
         Write-Host "  $Id already installed, skipping." -ForegroundColor DarkGray
     } else {

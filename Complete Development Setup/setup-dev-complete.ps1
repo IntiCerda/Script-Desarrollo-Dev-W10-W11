@@ -30,6 +30,8 @@ if ($PSScriptRoot) {
     Write-Host "  Running from URL -- downloading sub-scripts to TEMP..." -ForegroundColor DarkGray
     Invoke-WebRequest -UseBasicParsing -Uri "$BaseUrl/Basic%20Development%20Setup/setup-dev.ps1"      -OutFile $TempDev
     Invoke-WebRequest -UseBasicParsing -Uri "$BaseUrl/Docker%20and%20WSL%20Setup/setup-docker-wsl.ps1" -OutFile $TempDocker
+    Unblock-File $TempDev
+    Unblock-File $TempDocker
     $DevScript    = $TempDev
     $DockerScript = $TempDocker
     $CleanupTemps = $true
@@ -43,7 +45,7 @@ if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
     Invoke-WebRequest -UseBasicParsing -Uri "https://aka.ms/getwinget" -OutFile "$env:TEMP\Microsoft.DesktopAppInstaller.appxbundle"
     Add-AppxPackage "$env:TEMP\Microsoft.DesktopAppInstaller.appxbundle"
 }
-winget source update
+winget source update --accept-source-agreements
 
 Write-Step "Running Basic Development Setup..."
 & $DevScript -Orchestrated
