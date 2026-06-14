@@ -99,6 +99,6 @@ if ($currentPath -notlike "*$goPath*") {
     Write-Host "  Go bin already in PATH, skipping." -ForegroundColor DarkGray
 }
 
-Write-Host "✅ Basic Development Setup completed." -ForegroundColor Green
+Write-Host "Basic Development Setup completed." -ForegroundColor Green
 
 if (-not $Orchestrated) { Stop-Transcript }

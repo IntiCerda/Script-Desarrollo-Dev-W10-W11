@@ -65,7 +65,7 @@ Write-Host "  Updating WSL2 kernel..." -ForegroundColor DarkGray
 wsl --update
 wsl --set-default-version 2
 
-# Reboot check after dism — WSL2 may not activate until restarted
+# Reboot check after dism -- WSL2 may not activate until restarted
 if (Test-RebootPending) {
     Write-Warning "A system restart is pending. WSL2 and Docker may not work correctly until you restart."
     if (-not $Orchestrated) {
@@ -125,7 +125,7 @@ try {
 Write-Step "Installing MongoDB Compass Community..."
 Install-WingetPackage "MongoDB.Compass.Community"
 
-Write-Host "✅ Docker and WSL Setup completed." -ForegroundColor Green
+Write-Host "Docker and WSL Setup completed." -ForegroundColor Green
 Write-Host "Restart your system to apply all changes." -ForegroundColor Yellow
 
 if (-not $Orchestrated) { Stop-Transcript }

@@ -9,7 +9,7 @@
 # - Run Docker and WSL Setup      (setup-docker-wsl.ps1)
 # - Clean temporary files
 #
-# Can be run from disk OR via iex from URL — both work.
+# Can be run from disk OR via iex from URL -- both work.
 # ----------------------------------------
 
 # ---- Admin check ----
@@ -33,7 +33,7 @@ function Write-Step([string]$Msg) {
 }
 
 # ---- Resolve sub-script paths (disk or iex/URL) ----
-# When run via iex, $PSScriptRoot is empty — download sub-scripts to %TEMP%.
+# When run via iex, $PSScriptRoot is empty -- download sub-scripts to %TEMP%.
 $BaseUrl      = "https://raw.githubusercontent.com/IntiCerda/Script-Dev-W10-W11/main"
 $TempDev      = "$env:TEMP\setup-dev.ps1"
 $TempDocker   = "$env:TEMP\setup-docker-wsl.ps1"
@@ -78,7 +78,7 @@ if ($CleanupTemps) {
     Remove-Item $TempDocker -Force -ErrorAction SilentlyContinue
 }
 
-Write-Host "✅ Complete Development Setup finished." -ForegroundColor Green
+Write-Host "Complete Development Setup finished." -ForegroundColor Green
 Write-Host "Restart the system to apply all changes." -ForegroundColor Yellow
 
 Stop-Transcript
