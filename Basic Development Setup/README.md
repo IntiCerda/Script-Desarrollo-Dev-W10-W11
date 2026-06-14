@@ -22,7 +22,7 @@ Safe to re-run — already-installed packages are skipped.
 | fnm (Node version manager) | `Schniz.fnm` |
 | Node.js LTS | `fnm install --lts` |
 | Python 3.12 | `Python.Python.3.12` |
-| Java 21 (Temurin JDK) | `Eclipse.Adoptium.Temurin.21.JDK` |
+| Java 21 (Temurin JDK) | `EclipseAdoptium.Temurin.21.JDK` |
 
 **Dev utilities**
 
@@ -34,7 +34,7 @@ Safe to re-run — already-installed packages are skipped.
 
 **VS Code extensions**
 
-`ms-vscode.Go` · `dbaeumer.vscode-eslint` · `esbenp.prettier-vscode` · `ms-python.python` · `ms-azuretools.vscode-docker` · `mongodb.mongodb-vscode` · `eamodio.gitlens` · `humao.rest-client` · `EditorConfig.EditorConfig`
+`golang.go` · `dbaeumer.vscode-eslint` · `esbenp.prettier-vscode` · `ms-python.python` · `ms-azuretools.vscode-docker` · `mongodb.mongodb-vscode` · `eamodio.gitlens` · `humao.rest-client` · `EditorConfig.EditorConfig`
 
 **Environment**
 

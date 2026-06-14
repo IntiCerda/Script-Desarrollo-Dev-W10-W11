@@ -44,7 +44,7 @@ Write-Step "Installing languages (Go, fnm, Python $PythonVersion, Java $JavaVers
 Install-WingetPackage "GoLang.Go"
 Install-WingetPackage "Schniz.fnm"
 Install-WingetPackage "Python.Python.$PythonVersion"
-Install-WingetPackage "Eclipse.Adoptium.Temurin.$JavaVersion.JDK"
+Install-WingetPackage "EclipseAdoptium.Temurin.$JavaVersion.JDK"
 
 # Refresh PATH so fnm is available in this session before invoking it
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
@@ -61,7 +61,7 @@ Install-WingetPackage "jqlang.jq"
 Install-WingetPackage "GnuWin32.Make"
 
 Write-Step "Installing VSCode extensions (9)..."
-code --install-extension ms-vscode.Go
+code --install-extension golang.go
 code --install-extension dbaeumer.vscode-eslint
 code --install-extension esbenp.prettier-vscode
 code --install-extension ms-python.python
