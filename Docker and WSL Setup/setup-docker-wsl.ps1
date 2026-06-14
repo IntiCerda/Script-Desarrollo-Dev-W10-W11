@@ -1,21 +1,7 @@
 param([switch]$Orchestrated)
-# ----------------------------------------
-# Docker and WSL Setup
-# This script installs and configures WSL2 and Docker Desktop
-# on Windows 10/11.
-# Actions:
-# - Turn on WSL2 features (Windows Subsystem for Linux and Virtual Machine Platform)
-# - Update WSL2 kernel
-# - Set WSL2 as the default version
-# - Install Ubuntu under WSL
-# - Check virtualisation prerequisites before Docker install
-# - Download and install Docker Desktop (detects AMD64 or ARM64), skips if already installed
-# - Try to set Docker to use WSL2 (may need restart)
-# - Install MongoDB Compass Community
-# Pass -Orchestrated when called from setup-dev-complete.ps1 to skip admin check and transcript.
-# ----------------------------------------
+# Docker and WSL Setup -- enables WSL2, installs Ubuntu, Docker Desktop, and MongoDB Compass.
+# Pass -Orchestrated when called from setup-dev-complete.ps1.
 
-# ---- Step counter ----
 $script:Step  = 0
 $script:Total = 5
 function Write-Step([string]$Msg) {
@@ -23,7 +9,6 @@ function Write-Step([string]$Msg) {
     Write-Host "[$script:Step/$script:Total] $Msg" -ForegroundColor Cyan
 }
 
-# ---- Helper: detect pending reboot ----
 function Test-RebootPending {
     if (Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Component Based Servicing\RebootPending") { return $true }
     if (Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired") { return $true }
@@ -32,7 +17,6 @@ function Test-RebootPending {
     return ($null -ne $pfro)
 }
 
-# ---- Helper: install only if not already present ----
 function Install-WingetPackage {
     param([string]$Id, [string]$Source = "winget")
     $check = winget list --id $Id --exact 2>$null | Select-String ([regex]::Escape($Id))
@@ -43,7 +27,6 @@ function Install-WingetPackage {
     }
 }
 
-# ---- Admin check + transcript (standalone only) ----
 if (-not $Orchestrated) {
     if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
         Write-Error "Run this script as Administrator."; exit 1
@@ -55,17 +38,14 @@ if (-not $Orchestrated) {
 
 Write-Host "Starting Docker and WSL Setup..." -ForegroundColor Cyan
 
-# ---- [1/5] WSL2 features ----
 Write-Step "Enabling WSL2 features..."
 dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
 dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
 
-# Update WSL2 kernel before setting default version (fixes failures on older Windows 10 builds)
-Write-Host "  Updating WSL2 kernel..." -ForegroundColor DarkGray
+# wsl --update must run before --set-default-version to avoid kernel errors on older Windows 10 builds
 wsl --update
 wsl --set-default-version 2
 
-# Reboot check after dism -- WSL2 may not activate until restarted
 if (Test-RebootPending) {
     Write-Warning "A system restart is pending. WSL2 and Docker may not work correctly until you restart."
     if (-not $Orchestrated) {
@@ -79,14 +59,10 @@ if (Test-RebootPending) {
     }
 }
 
-# ---- [2/5] Ubuntu ----
 Write-Step "Installing Ubuntu..."
 wsl --install -d Ubuntu
 
-# ---- [3/5] Docker Desktop ----
 Write-Step "Installing Docker Desktop..."
-
-# Check virtualisation prerequisites before attempting install
 $vmp = Get-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -ErrorAction SilentlyContinue
 if ($vmp -and $vmp.State -ne 'Enabled') {
     Write-Warning "Virtual Machine Platform is not yet enabled (may need a restart). Docker Desktop may fail to start."
@@ -113,7 +89,6 @@ if ($dockerCheck) {
     Remove-Item $dockerInstaller -Force
 }
 
-# ---- [4/5] Configure Docker for WSL2 ----
 Write-Step "Configuring Docker for WSL2..."
 try {
     & "$env:ProgramFiles\Docker\Docker\DockerCli.exe" -SwitchLinuxEngine
@@ -121,7 +96,6 @@ try {
     Write-Host "  Could not configure Docker CLI (may require a restart)." -ForegroundColor Yellow
 }
 
-# ---- [5/5] MongoDB Compass ----
 Write-Step "Installing MongoDB Compass Community..."
 Install-WingetPackage "MongoDB.Compass.Community"
 

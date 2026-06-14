@@ -1,32 +1,45 @@
-# Docker and WSL Setup — Windows 10/11
+# Docker and WSL Setup
 
-## Description
+Enables WSL2, installs Ubuntu, sets up Docker Desktop, and installs MongoDB Compass Community on Windows 10/11.
+Safe to re-run — Docker Desktop download is skipped if already installed.
 
-This PowerShell script automates the full installation and configuration of **WSL2** and **Docker Desktop** on Windows 10 or 11, along with **MongoDB Compass Community**.
+## What gets installed
+
+| Component | Source |
+|-----------|--------|
+| WSL2 (Windows Subsystem for Linux) | `dism.exe` |
+| Virtual Machine Platform | `dism.exe` |
+| Ubuntu | `wsl --install -d Ubuntu` |
+| Docker Desktop (AMD64 or ARM64) | docker.com |
+| MongoDB Compass Community | winget `MongoDB.Compass.Community` |
+
+## Steps
+
+1. Enable WSL2 and Virtual Machine Platform via `dism.exe`
+2. Update WSL2 kernel (`wsl --update`) and set default version to 2
+3. Check for pending reboot — warns before continuing if one is detected
+4. Install Ubuntu
+5. Check Hyper-V / VMP prerequisites, then install Docker Desktop (skips if already installed)
+6. Configure Docker to use the WSL2 backend
+7. Install MongoDB Compass Community
 
 ---
 
-## What the Script Does
+## How to run
 
-1. **Enables WSL2 features** — activates Windows Subsystem for Linux and Virtual Machine Platform via `dism.exe`, and runs `wsl --update` to install the latest kernel.
-2. **Sets WSL2 as default** — ensures new Linux distros use WSL2.
-3. **Installs Ubuntu** — installs the latest Ubuntu from the Microsoft Store.
-4. **Reboot check** — warns if a pending restart may prevent WSL2 from activating.
-5. **Installs Docker Desktop** — detects architecture (AMD64 or ARM64) and downloads the correct installer. Skips if already installed.
-6. **Configures Docker for WSL2** — switches Docker to the Linux/WSL2 engine.
-7. **Installs MongoDB Compass Community** — GUI for MongoDB management.
+One-line (PowerShell as Administrator):
 
----
+```powershell
+iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/IntiCerda/Script-Dev-W10-W11/main/Docker%20and%20WSL%20Setup/setup-docker-wsl.ps1'))
+```
 
-## Installed Components
+From disk:
 
-| Component                             | Description                                             | Source          |
-| ------------------------------------- | ------------------------------------------------------- | --------------- |
-| **Windows Subsystem for Linux (WSL)** | Enables running Linux directly on Windows.              | Microsoft       |
-| **Virtual Machine Platform**          | Required for WSL2 virtualization.                       | Microsoft       |
-| **Ubuntu**                            | Default Linux distribution installed under WSL2.        | Microsoft Store |
-| **Docker Desktop**                    | Container management platform with WSL2 backend.        | Docker Inc.     |
-| **MongoDB Compass Community**         | GUI for managing and querying MongoDB databases.        | winget          |
+```powershell
+& ".\Docker and WSL Setup\setup-docker-wsl.ps1"
+```
+
+Output is logged to `%TEMP%\setup-docker-wsl-<timestamp>.log`.
 
 ---
 
@@ -35,44 +48,10 @@ This PowerShell script automates the full installation and configuration of **WS
 - Windows 10 or 11
 - Administrator privileges
 - Virtualization enabled in BIOS (VT-x / AMD-V)
-- Internet connection
 
-> Check via **Task Manager → Performance → CPU → Virtualization: Enabled**.
-
----
-
-## How to Run
-
-### One-line execution (recommended)
-
-Open PowerShell **as Administrator** and run:
-
-```powershell
-iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/IntiCerda/Script-Dev-W10-W11/main/Docker%20and%20WSL%20Setup/setup-docker-wsl.ps1'))
-```
-
-### Manual download and execution
-
-```powershell
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/IntiCerda/Script-Dev-W10-W11/main/Docker%20and%20WSL%20Setup/setup-docker-wsl.ps1" -OutFile "$env:USERPROFILE\Downloads\setup-docker-wsl.ps1"
-powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\Downloads\setup-docker-wsl.ps1"
-```
-
-### From disk (after cloning the repo)
-
-```powershell
-& ".\Docker and WSL Setup\setup-docker-wsl.ps1"
-```
-
----
-
-## Post-Installation
-
-After the script completes, **restart your computer**, then verify:
+After the script completes, restart your computer, then verify:
 
 ```powershell
 wsl --status
 docker version
 ```
-
-Once restarted, Docker Desktop and Ubuntu will be available from the Start Menu.
