@@ -23,7 +23,7 @@ function Install-WingetPackage {
     if ($check) {
         Write-Host "  $Id already installed, skipping." -ForegroundColor DarkGray
     } else {
-        winget install --id $Id -e --source $Source --accept-source-agreements --accept-package-agreements
+        winget install --id $Id -e --source $Source --silent --accept-source-agreements --accept-package-agreements
     }
 }
 
