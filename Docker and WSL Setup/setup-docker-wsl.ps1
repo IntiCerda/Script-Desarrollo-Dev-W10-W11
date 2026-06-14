@@ -46,21 +46,23 @@ dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /nores
 wsl --update
 wsl --set-default-version 2
 
-if (Test-RebootPending) {
-    Write-Warning "A system restart is pending. WSL2 and Docker may not work correctly until you restart."
-    if (-not $Orchestrated) {
-        $response = Read-Host "Continue anyway? (y/N)"
-        if ($response -notmatch '^[yY]$') {
-            Write-Host "Exiting. Restart and run the script again." -ForegroundColor Yellow
-            Stop-Transcript; exit 0
-        }
-    } else {
-        Write-Host "  Continuing in orchestrated mode -- restart after the full setup completes." -ForegroundColor Yellow
-    }
-}
+$rebootNeeded = Test-RebootPending
 
 Write-Step "Installing Ubuntu..."
-wsl --install -d Ubuntu
+if ($rebootNeeded) {
+    # WSL2 kernel is not yet active -- schedule Ubuntu install for after reboot
+    $taskName  = "WSL-Ubuntu-PostReboot"
+    $taskCmd   = "wsl --install -d Ubuntu --no-launch; Unregister-ScheduledTask -TaskName '$taskName' -Confirm:`$false"
+    $action    = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NonInteractive -Command `"$taskCmd`""
+    $trigger   = New-ScheduledTaskTrigger -AtLogon
+    $principal = New-ScheduledTaskPrincipal -GroupId "BUILTIN\Administrators" -RunLevel Highest
+    $settings  = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Minutes 30)
+    Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $trigger `
+        -Principal $principal -Settings $settings -Force | Out-Null
+    Write-Host "  WSL2 restart required -- Ubuntu will install automatically on next login." -ForegroundColor Yellow
+} else {
+    wsl --install -d Ubuntu --no-launch
+}
 
 Write-Step "Installing Docker Desktop..."
 $vmp = Get-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -ErrorAction SilentlyContinue
@@ -100,6 +102,10 @@ Write-Step "Installing MongoDB Compass Community..."
 Install-WingetPackage "MongoDB.Compass.Community"
 
 Write-Host "Docker and WSL Setup completed." -ForegroundColor Green
-Write-Host "Restart your system to apply all changes." -ForegroundColor Yellow
+if ($rebootNeeded) {
+    Write-Host "Restart your system -- Ubuntu will finish installing automatically on next login." -ForegroundColor Yellow
+} else {
+    Write-Host "Restart your system to apply all changes." -ForegroundColor Yellow
+}
 
 if (-not $Orchestrated) { Stop-Transcript }
