@@ -43,7 +43,7 @@ if ($PSScriptRoot) {
     $DevScript    = "$PSScriptRoot\..\Basic Development Setup\setup-dev.ps1"
     $DockerScript = "$PSScriptRoot\..\Docker and WSL Setup\setup-docker-wsl.ps1"
 } else {
-    Write-Host "  Running from URL — downloading sub-scripts to TEMP..." -ForegroundColor DarkGray
+    Write-Host "  Running from URL -- downloading sub-scripts to TEMP..." -ForegroundColor DarkGray
     Invoke-WebRequest -UseBasicParsing -Uri "$BaseUrl/Basic%20Development%20Setup/setup-dev.ps1"      -OutFile $TempDev
     Invoke-WebRequest -UseBasicParsing -Uri "$BaseUrl/Docker%20and%20WSL%20Setup/setup-docker-wsl.ps1" -OutFile $TempDocker
     $DevScript    = $TempDev

@@ -67,7 +67,7 @@ if (Get-Command fnm -ErrorAction SilentlyContinue) {
     fnm install --lts
     Write-Host "  Node.js LTS installed via fnm." -ForegroundColor DarkGray
 } else {
-    Write-Host "  fnm installed — run 'fnm install --lts' after restarting your terminal." -ForegroundColor Yellow
+    Write-Host "  fnm installed -- run 'fnm install --lts' after restarting your terminal." -ForegroundColor Yellow
 }
 
 # ---- [3/5] Dev tools ----

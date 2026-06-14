@@ -1,47 +1,20 @@
-# Docker and WSL Setup – Windows 10/11
+# Docker and WSL Setup — Windows 10/11
 
 ## Description
 
-This PowerShell script automates the full installation and configuration of **WSL2 (Windows Subsystem for Linux)** and **Docker Desktop** on Windows 10 or Windows 11.
-It is designed to simplify the setup process for developers who need a ready-to-use Linux and Docker environment on Windows.
+This PowerShell script automates the full installation and configuration of **WSL2** and **Docker Desktop** on Windows 10 or 11, along with **MongoDB Compass Community**.
 
-### What the Script Does
+---
 
-The script performs the following steps automatically:
+## What the Script Does
 
-1. **Enable Required Windows Features**
-
-   - Activates the **Windows Subsystem for Linux (WSL)** and the **Virtual Machine Platform** features through `dism.exe`.
-   - These are required components to run Linux distributions on Windows and to use Docker with WSL2.
-
-2. **Set WSL2 as Default**
-
-   - Ensures that any new Linux distributions installed will use **WSL2** instead of the legacy WSL1 engine.
-   - WSL2 provides better performance, full system call compatibility, and is required for Docker integration.
-
-3. **Install Ubuntu**
-
-   - Installs the **latest version of Ubuntu** available from the Microsoft Store using the `wsl --install` command.
-   - This provides a stable and widely used Linux environment ready for development.
-
-4. **Download and Install Docker Desktop**
-
-   - Downloads the latest **Docker Desktop Installer** directly from Docker’s official source.
-   - Installs Docker Desktop silently (`--quiet`), ensuring a smooth setup experience.
-   - Once installed, Docker Desktop provides a GUI for managing containers, images, and volumes.
-
-5. **Configure Docker to Use WSL2**
-
-   - Automatically switches Docker to use the **Linux Engine** (WSL2 backend) instead of the Hyper-V engine.
-   - This ensures optimal performance and seamless integration with your Ubuntu environment.
-
-6. **Cleanup Temporary Files**
-
-   - Removes the Docker installer after setup to keep the system clean.
-
-7. **Final Step – Restart**
-
-   - Prompts the user to **restart the system** to finalize changes and apply all configurations.
+1. **Enables WSL2 features** — activates Windows Subsystem for Linux and Virtual Machine Platform via `dism.exe`, and runs `wsl --update` to install the latest kernel.
+2. **Sets WSL2 as default** — ensures new Linux distros use WSL2.
+3. **Installs Ubuntu** — installs the latest Ubuntu from the Microsoft Store.
+4. **Reboot check** — warns if a pending restart may prevent WSL2 from activating.
+5. **Installs Docker Desktop** — detects architecture (AMD64 or ARM64) and downloads the correct installer. Skips if already installed.
+6. **Configures Docker for WSL2** — switches Docker to the Linux/WSL2 engine.
+7. **Installs MongoDB Compass Community** — GUI for MongoDB management.
 
 ---
 
@@ -52,46 +25,54 @@ The script performs the following steps automatically:
 | **Windows Subsystem for Linux (WSL)** | Enables running Linux directly on Windows.              | Microsoft       |
 | **Virtual Machine Platform**          | Required for WSL2 virtualization.                       | Microsoft       |
 | **Ubuntu**                            | Default Linux distribution installed under WSL2.        | Microsoft Store |
-| **Docker Desktop**                    | Provides Docker engine and GUI for managing containers. | Docker Inc.     |
+| **Docker Desktop**                    | Container management platform with WSL2 backend.        | Docker Inc.     |
+| **MongoDB Compass Community**         | GUI for managing and querying MongoDB databases.        | winget          |
 
 ---
 
-## Why This Script is Useful
+## Requirements
 
-- **Automates all setup steps** — no need to manually enable Windows features or download installers.
-- ⚡ **Saves time** by installing and configuring both WSL2 and Docker in one go.
-- **Ensures compatibility** by setting Docker to use the optimal WSL2 backend.
-- **Ideal for developers** working with containers, microservices, or Linux-based tools from Windows.
+- Windows 10 or 11
+- Administrator privileges
+- Virtualization enabled in BIOS (VT-x / AMD-V)
+- Internet connection
+
+> Check via **Task Manager → Performance → CPU → Virtualization: Enabled**.
 
 ---
 
 ## How to Run
 
-To execute the script directly from your terminal (PowerShell) using the raw file from GitHub, run the following command:
+### One-line execution (recommended)
+
+Open PowerShell **as Administrator** and run:
 
 ```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; `
-iwr -useb https://raw.githubusercontent.com/IntiCerda/Script-Dev-W10-W11/main/Docker%20and%20WSL%20Setup/setup-docker-wsl.ps1 | iex
+iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/IntiCerda/Script-Dev-W10-W11/main/Docker%20and%20WSL%20Setup/setup-docker-wsl.ps1'))
 ```
 
-This command:
+### Manual download and execution
 
-- Temporarily **bypasses PowerShell’s execution policy** (so you don’t need admin changes).
-- **Downloads and runs** the script directly from your GitHub repository.
-- Works on **Windows 10 and 11**.
+```powershell
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/IntiCerda/Script-Dev-W10-W11/main/Docker%20and%20WSL%20Setup/setup-docker-wsl.ps1" -OutFile "$env:USERPROFILE\Downloads\setup-docker-wsl.ps1"
+powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\Downloads\setup-docker-wsl.ps1"
+```
 
----
+### From disk (after cloning the repo)
 
-## 🚀 Post-Installation Notes
-
-- After installation completes, **restart your computer**.
-- You can verify that WSL2 and Docker are working properly by running:
-
-  ```powershell
-  wsl --status
-  docker version
-  ```
-
-- Once restarted, you’ll be able to launch **Docker Desktop** and **Ubuntu** from the Start Menu.
+```powershell
+& ".\Docker and WSL Setup\setup-docker-wsl.ps1"
+```
 
 ---
+
+## Post-Installation
+
+After the script completes, **restart your computer**, then verify:
+
+```powershell
+wsl --status
+docker version
+```
+
+Once restarted, Docker Desktop and Ubuntu will be available from the Start Menu.

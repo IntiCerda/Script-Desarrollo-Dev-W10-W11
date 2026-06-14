@@ -75,7 +75,7 @@ if (Test-RebootPending) {
             Stop-Transcript; exit 0
         }
     } else {
-        Write-Host "  Continuing in orchestrated mode — restart after the full setup completes." -ForegroundColor Yellow
+        Write-Host "  Continuing in orchestrated mode -- restart after the full setup completes." -ForegroundColor Yellow
     }
 }
 
@@ -93,7 +93,7 @@ if ($vmp -and $vmp.State -ne 'Enabled') {
 }
 $hvAll = Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All -ErrorAction SilentlyContinue
 if ($hvAll -and $hvAll.State -ne 'Enabled') {
-    Write-Host "  Hyper-V not enabled — Docker will use WSL2 backend (this is fine)." -ForegroundColor DarkGray
+    Write-Host "  Hyper-V not enabled -- Docker will use WSL2 backend (this is fine)." -ForegroundColor DarkGray
 }
 
 $dockerCheck = winget list --id Docker.DockerDesktop --exact 2>$null | Select-String "Docker.DockerDesktop"
